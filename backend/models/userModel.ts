@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Document, Schema, model } from "mongoose";
 
 const userSchema = new Schema(
   {
@@ -16,10 +16,15 @@ const userSchema = new Schema(
     passwordConfirm: {
       type: String,
       validate: {
-        validator: function (val) {
+        validator: function (
+          this: Document & { password: string; authProvider: string },
+          val: string
+        ) {
+          if (this.authProvider !== "local") return true;
           return val === this.password;
         },
       },
+      message: "Passwords do not match!",
     },
     authProvider: { type: String, enum: ["local", "google", "github"] },
     providerId: String,
