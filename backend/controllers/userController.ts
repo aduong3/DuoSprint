@@ -4,9 +4,23 @@ import User from "../models/userModel";
 // req.body needs to include the authProvider so that we know which route to take in signUp
 export async function signUp(req: Request, res: Response, next: NextFunction) {
   try {
-    const { email, username, password } = req.body;
+    const {
+      email,
+      username,
+      password,
+      emailConfirm,
+      passwordConfirm,
+      authProvider,
+    } = req.body;
 
-    const newUser = await User.create({ email, username, password });
+    const newUser = await User.create({
+      email,
+      username,
+      password,
+      emailConfirm,
+      passwordConfirm,
+      authProvider,
+    });
 
     res.status(201).json({
       status: "success",

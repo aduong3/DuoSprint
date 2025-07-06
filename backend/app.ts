@@ -6,9 +6,11 @@ const app: Express = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:5173"],
   })
 );
+
+app.use(express.json());
 
 app.use("/api/v1/users", userRouter);
 
