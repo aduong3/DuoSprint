@@ -28,8 +28,6 @@ const userSchema = new Schema(
     },
     authProvider: { type: String, enum: ["local", "google", "github"] },
     providerId: String,
-    createdAt: Date,
-    updatedAt: Date,
     role: { type: String, enum: ["user", "admin"], default: "user" },
   },
   { timestamps: true }
