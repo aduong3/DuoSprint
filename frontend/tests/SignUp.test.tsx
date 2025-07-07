@@ -15,13 +15,21 @@ jest.mock("../src/services/apiAuth", () => ({
 describe("Sign Up Form", () => {
   test("renders without crashing", () => {
     renderWithClient(<SignUp />);
-    expect(screen.getByPlaceholderText("Enter your username"));
-    expect(screen.getByPlaceholderText("Enter your email"));
-    expect(screen.getByPlaceholderText("Re-enter your email"));
-    expect(screen.getByPlaceholderText("Enter your password"));
-    expect(screen.getByPlaceholderText("Re-enter your password"));
-    expect(screen.getByText("Sign Up"));
-    expect(screen.getByText("Other sign up options:"));
+    expect(
+      screen.getByPlaceholderText("Enter your username")
+    ).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Enter your email")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Re-enter your email")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Enter your password")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Re-enter your password")
+    ).toBeInTheDocument();
+    expect(screen.getByText("Sign Up")).toBeInTheDocument();
+    expect(screen.getByText("Other sign up options:")).toBeInTheDocument();
   });
 
   test("submits when all fields are valid", async () => {
@@ -167,5 +175,93 @@ describe("Sign Up Form", () => {
 
     fireEvent.click(screen.getByText("Sign Up"));
     expect(screen.getByText("One of the fields is empty!"));
+  });
+
+  test("Does not submit when email and emailConfirm are different", async () => {
+    (signUpTraditional as jest.Mock).mockRejectedValueOnce(
+      new Error("Emails do not match!")
+    );
+    renderWithClient(<SignUp />);
+
+    const usernameInput = screen.getByPlaceholderText(
+      "Enter your username"
+    ) as HTMLInputElement;
+    const emailInput = screen.getByPlaceholderText(
+      "Enter your email"
+    ) as HTMLInputElement;
+    const emailConfirmInput = screen.getByPlaceholderText(
+      "Re-enter your email"
+    ) as HTMLInputElement;
+    const passwordInput = screen.getByPlaceholderText(
+      "Enter your password"
+    ) as HTMLInputElement;
+    const passwordConfirmInput = screen.getByPlaceholderText(
+      "Re-enter your password"
+    ) as HTMLInputElement;
+
+    fireEvent.change(usernameInput, {
+      target: { value: "DuoSprintUser" },
+    });
+    fireEvent.change(emailInput, {
+      target: { value: "newUser@duosprint.com" },
+    });
+    fireEvent.change(emailConfirmInput, {
+      target: { value: "user@duosprint.com" },
+    });
+    fireEvent.change(passwordInput, {
+      target: { value: "gabagool12" },
+    });
+    fireEvent.change(passwordConfirmInput, {
+      target: { value: "gabagool12" },
+    });
+    fireEvent.click(screen.getByText("Sign Up"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Emails do not match!")).toBeInTheDocument();
+    });
+  });
+
+  test("Does not submit when password and passwordConfirm are different", async () => {
+    (signUpTraditional as jest.Mock).mockRejectedValueOnce(
+      new Error("Passwords do not match!")
+    );
+    renderWithClient(<SignUp />);
+
+    const usernameInput = screen.getByPlaceholderText(
+      "Enter your username"
+    ) as HTMLInputElement;
+    const emailInput = screen.getByPlaceholderText(
+      "Enter your email"
+    ) as HTMLInputElement;
+    const emailConfirmInput = screen.getByPlaceholderText(
+      "Re-enter your email"
+    ) as HTMLInputElement;
+    const passwordInput = screen.getByPlaceholderText(
+      "Enter your password"
+    ) as HTMLInputElement;
+    const passwordConfirmInput = screen.getByPlaceholderText(
+      "Re-enter your password"
+    ) as HTMLInputElement;
+
+    fireEvent.change(usernameInput, {
+      target: { value: "DuoSprintUser" },
+    });
+    fireEvent.change(emailInput, {
+      target: { value: "newUser@duosprint.com" },
+    });
+    fireEvent.change(emailConfirmInput, {
+      target: { value: "newUser@duosprint.com" },
+    });
+    fireEvent.change(passwordInput, {
+      target: { value: "gabagool123" },
+    });
+    fireEvent.change(passwordConfirmInput, {
+      target: { value: "gabagool12" },
+    });
+    fireEvent.click(screen.getByText("Sign Up"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Passwords do not match!")).toBeInTheDocument();
+    });
   });
 });
