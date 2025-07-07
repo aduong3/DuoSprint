@@ -12,6 +12,21 @@ export default function SignUp() {
 
   const mutation = useMutation({
     mutationFn: signUpTraditional,
+    onSuccess: () => {
+      console.log("Success!");
+      setUsername("");
+      setEmail("");
+      setEmailConfirm("");
+      setPassword("");
+      setPasswordConfirm("");
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError(error);
+      }
+    },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -31,11 +46,6 @@ export default function SignUp() {
     };
 
     mutation.mutate(newUser);
-    setUsername("");
-    setEmail("");
-    setEmailConfirm("");
-    setPassword("");
-    setPasswordConfirm("");
   };
 
   return (

@@ -26,14 +26,14 @@ export async function signUpTraditional(newUser: traditionalSignUp) {
     }
 
     const data = await res.json();
-    console.log(data);
+    return data;
   } catch (err) {
     if (err instanceof Error) {
       console.log(err.message);
-      throw new Error(err.message);
+      throw err;
     } else {
       console.log(err);
-      throw new Error(err);
+      throw new Error("Unknown Error");
     }
   }
 }

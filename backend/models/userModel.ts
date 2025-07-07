@@ -33,6 +33,7 @@ const userSchema = new Schema<IUser>(
           if (this.authProvider !== "local") return true;
           return val === this.email;
         },
+        message: "Emails do not match!",
       },
     },
     password: { type: String, select: false },
@@ -43,8 +44,8 @@ const userSchema = new Schema<IUser>(
           if (this.authProvider !== "local") return true;
           return val === this.password;
         },
+        message: "Passwords do not match!",
       },
-      message: "Passwords do not match!",
     },
     authProvider: {
       type: String,

@@ -28,13 +28,25 @@ export async function signUp(req: Request, res: Response, next: NextFunction) {
         user: newUser,
       },
     });
-  } catch (err) {
-    let msg;
-    if (err instanceof Error) {
-      msg = err.message;
-    } else {
+  } catch (err: any) {
+    let msg = "";
+    if (typeof err === "string") {
       msg = err;
     }
+
+    if (typeof err === "object") {
+      if (err.code === 11000) {
+        if (Object.keys(err.keyValue).includes("username"))
+          msg += `This username has already been taken!`;
+        else if (Object.keys(err.keyValue).includes("email"))
+          msg += "This email is already being used!";
+      } else if (err.name === "ValidationError") {
+        msg = Object.values(err.errors)
+          .map((e: any) => e.message)
+          .join(" ");
+      }
+    }
+
     res.status(400).json({
       status: "failed",
       message: msg,
