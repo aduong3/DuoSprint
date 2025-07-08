@@ -19,6 +19,7 @@ export default function SignUp() {
       setEmailConfirm("");
       setPassword("");
       setPasswordConfirm("");
+      setError("");
     },
     onError: (error) => {
       if (error instanceof Error) {
@@ -28,6 +29,7 @@ export default function SignUp() {
       }
     },
   });
+  const { isPending } = mutation;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,18 +116,19 @@ export default function SignUp() {
           </div>
           <button
             type="submit"
-            className="bg-gray-400 rounded-lg py-1 text-white hover:cursor-pointer"
+            className="rounded-lg py-1 text-white not-disabled:bg-blue-400 disabled:bg-gray-400 not-disabled:hover:cursor-pointer"
+            disabled={isPending}
           >
-            Sign Up
+            {isPending ? "Loading..." : "Sign Up"}
           </button>
         </form>
-        <section className="flex flex-col gap-4 justify-center items-center">
+        {/* <section className="flex flex-col gap-4 justify-center items-center">
           <p className="text-gray-500">Other sign up options:</p>
           <div className="flex gap-8">
             <div className="bg-gray-500 w-8 h-8 rounded-lg">GH</div>
             <div className="bg-gray-500 w-8 h-8 rounded-lg">Gg</div>
           </div>
-        </section>
+        </section> */}
       </div>
     </section>
   );

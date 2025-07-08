@@ -1,8 +1,63 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../models/userModel";
+import jwt from "jsonwebtoken";
 
-// req.body needs to include the authProvider so that we know which route to take in signUp
+type UserType = {
+  _id: string;
+  username: string;
+  email: string;
+  emailConfirm?: string;
+  password?: string;
+  passwordConfirm?: string;
+  authProvider: string;
+};
+
+// const signTokens = (userId: string, sessionId: string) => {
+//   const accessToken = jwt.sign({ userId, sessionId }, process.env.JWT_SECRET!, {
+//     expiresIn: process.env.ACCESS_TOKEN_EXPIRY!,
+//   });
+
+//   const refreshToken = jwt.sign(
+//     { userId, sessionId },
+//     process.env.JWT_SECRET!,
+//     {
+//       expiresIn: process.env.REFRESH_TOKEN_EXPIRY!,
+//     }
+//   );
+
+//   return { accessToken, refreshToken };
+// };
+
+// const createSendToken = (user: UserType, statusCode: number, res: Response) => {
+//   //need to get sessionId somewhere or create it myself.
+//   const { accessToken, refreshToken } = signTokens(user._id, sessionId);
+
+//   const refreshCookieExpires = parseInt(
+//     process.env.JWT_REFRESH_COOKIE_EXPIRES_IN!
+//   );
+
+//   const refreshCookieOptions = {
+//     expires: new Date(Date.now() + refreshCookieExpires * 24 * 60 * 60 * 1000),
+//     httpOnly: true,
+//     sameSite: "none" as "none",
+//     secure: true,
+//   };
+
+//   res.cookie("refreshToken", refreshToken, refreshCookieOptions);
+
+//   user.password = undefined;
+
+//   res.status(statusCode).json({
+//     status: "success",
+//     accessToken,
+//     data: {
+//       user,
+//     },
+//   });
+// };
+
 export async function signUp(req: Request, res: Response, next: NextFunction) {
+  // req.body needs to include the authProvider so that we know which route to take in signUp
   try {
     const {
       email,
