@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { signUpTraditional } from "../services/apiAuth";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
   const [username, setUsername] = useState("");
@@ -10,16 +11,19 @@ export default function SignUp() {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [error, setError] = useState("");
 
+  const navigate = useNavigate();
+
   const mutation = useMutation({
     mutationFn: signUpTraditional,
     onSuccess: () => {
-      console.log("Success!");
       setUsername("");
       setEmail("");
       setEmailConfirm("");
       setPassword("");
       setPasswordConfirm("");
       setError("");
+
+      navigate("/dashboard", { replace: true });
     },
     onError: (error) => {
       if (error instanceof Error) {
@@ -35,7 +39,7 @@ export default function SignUp() {
     e.preventDefault();
 
     if (!username || !email || !emailConfirm || !password || !passwordConfirm) {
-      setError("One of the fields is empty!");
+      setError("One or more of the fields are empty!");
     }
 
     const newUser = {
