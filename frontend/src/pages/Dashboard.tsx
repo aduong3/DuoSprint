@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { joinQueue } from "../services/apiSockets";
+import { useEffect, useState } from "react";
+import { connectSocket, joinQueue, socket } from "../services/apiSockets";
 import { useUserContext } from "../../contexts/userContext";
+import { useNavigate } from "react-router-dom";
 
 const availableStacks = ["React", "Angular", "Vue"];
 
@@ -10,14 +11,26 @@ export default function Dashboard() {
 
   const { user } = useUserContext();
 
-  if (!user) return <div>Loading...</div>;
+  const { userId, username } = user!;
 
-  const { userId, username } = user;
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    connectSocket();
     joinQueue({ userId, username, skillLevel, techStack });
   };
+
+  useEffect(() => {
+    socket.on("match_found", ({ newRoomId, partner }) => {
+      console.log("Matched with", partner);
+      navigate(`/room/${newRoomId}`);
+    });
+
+    return () => {
+      socket.off("match_found");
+    };
+  }, []);
 
   return (
     <div className="flex flex-col gap-3">
@@ -35,7 +48,7 @@ export default function Dashboard() {
 
         <label>Tech Stack</label>
         {availableStacks.map((stack) => (
-          <>
+          <div key={stack}>
             <label>{stack}</label>
             <input
               type="checkbox"
@@ -49,7 +62,7 @@ export default function Dashboard() {
                 )
               }
             />
-          </>
+          </div>
         ))}
 
         <button>Start Sprint</button>
