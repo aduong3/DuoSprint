@@ -1,11 +1,50 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+
+const availableStacks = ["React", "Angular", "Vue"];
 
 export default function Dashboard() {
-  const roomId = "1d23-4b36-as2f";
+  const [skillLevel, setSkillLevel] = useState("beginner");
+  const [techStack, setTechStack] = useState<string[]>([]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
   return (
     <div className="flex flex-col gap-3">
       <span>Dashboard</span>
-      <Link to={`/room/${roomId}`}>Start Sprint</Link>
+      <form onSubmit={handleSubmit}>
+        <label>Skill Level:</label>
+        <select
+          value={skillLevel}
+          onChange={(e) => setSkillLevel(e.target.value)}
+        >
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="expert">Expert</option>
+        </select>
+
+        <label>Tech Stack</label>
+        {availableStacks.map((stack) => (
+          <>
+            <label>{stack}</label>
+            <input
+              type="checkbox"
+              value={stack}
+              checked={techStack.includes(stack)}
+              onChange={(e) =>
+                setTechStack((prev) =>
+                  e.target.checked
+                    ? [...prev, stack]
+                    : prev.filter((s) => s !== stack)
+                )
+              }
+            />
+          </>
+        ))}
+
+        <button>Start Sprint</button>
+      </form>
     </div>
   );
 }
