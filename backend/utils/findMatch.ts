@@ -1,6 +1,7 @@
 type User = {
   socketId: string;
   userId: string;
+  username: string;
   skillLevel: string;
   techStack: string[];
 };
