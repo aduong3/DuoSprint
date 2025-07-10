@@ -4,25 +4,28 @@ import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import SprintRoom from "./pages/SprintRoom";
+import { UserContextProvider } from "../contexts/userContext";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Route>
+    <UserContextProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
 
-        {/* Account Routes */}
-        <Route path="/accounts/" element={<Layout />}>
-          <Route path="signup" element={<SignUp />} />
-        </Route>
+          {/* Account Routes */}
+          <Route path="/accounts/" element={<Layout />}>
+            <Route path="signup" element={<SignUp />} />
+          </Route>
 
-        {/* Room Routes */}
-        <Route path="/room/:id" element={<SprintRoom />} />
-      </Routes>
-    </BrowserRouter>
+          {/* Room Routes */}
+          <Route path="/room/:id" element={<SprintRoom />} />
+        </Routes>
+      </BrowserRouter>
+    </UserContextProvider>
   );
 }
 

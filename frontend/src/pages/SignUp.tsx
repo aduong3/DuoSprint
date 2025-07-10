@@ -1,7 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { signUpTraditional } from "../services/apiAuth";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext, useUserContext } from "../../contexts/userContext";
 
 export default function SignUp() {
   const [username, setUsername] = useState("");
@@ -13,9 +14,15 @@ export default function SignUp() {
 
   const navigate = useNavigate();
 
+  const { setUser } = useUserContext();
+
   const mutation = useMutation({
     mutationFn: signUpTraditional,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const { _id: userId, username } = data;
+
+      setUser({ userId, username });
+
       setUsername("");
       setEmail("");
       setEmailConfirm("");

@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: "./.env" });
 import app from "./app";
 import { findMatch } from "./utils/findMatch";
+import { cleanUpRoom } from "./utils/cleanUpRoom";
 
 const DB_URI = process.env.DATABASE_URI!;
 const DB_USER = process.env.DATABASE_USER!;
@@ -35,9 +36,11 @@ type User = {
 };
 
 const queue: User[] = [];
-const rooms: string[] = [];
+const rooms = new Set<string>();
 // 3. Listen for io conection
 io.on("connection", (socket) => {
+  socket.data.roomId = null;
+
   // skillLevel = beginner, intermediate, expert
   // techStack = React, JavaScript, Python, etc
   socket.on("join_queue", ({ userId, skillLevel, techStack, username }) => {
@@ -72,12 +75,15 @@ io.on("connection", (socket) => {
     let newRoomId;
     do {
       newRoomId = Math.random().toString(36).substring(0, 8);
-    } while (rooms.includes(newRoomId));
+    } while (rooms.has(newRoomId));
 
-    rooms.push(newRoomId);
+    rooms.add(newRoomId);
 
     const matchedUserSocket = io.sockets.sockets.get(matchedUser.socketId);
     const userSocket = io.sockets.sockets.get(newUser.socketId);
+
+    matchedUserSocket!.data.roomId = newRoomId;
+    userSocket!.data.roomId = newRoomId;
 
     matchedUserSocket?.join(newRoomId);
     userSocket?.join(newRoomId);
@@ -90,6 +96,11 @@ io.on("connection", (socket) => {
       newRoomId,
       partner: matchedUser.username,
     });
+  });
+
+  socket.on("disconnect", () => {
+    const roomId = socket.data.roomId;
+    if (roomId) cleanUpRoom(io, rooms, roomId);
   });
 });
 
