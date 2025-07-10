@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: "./.env" });
 import app from "./app";
+import { findMatch } from "./utils/findMatch";
 
 const DB_URI = process.env.DATABASE_URI!;
 const DB_USER = process.env.DATABASE_USER!;
@@ -25,9 +26,43 @@ const io = new Server(server, {
   },
 });
 
-// 3. Listen for io conection
+type User = {
+  socketId: string;
+  userId: string;
+  skillLevel: string;
+  techStack: string[];
+};
 
-io.on("connection", () => {});
+const queue: User[] = [];
+// 3. Listen for io conection
+io.on("connection", (socket) => {
+  // skillLevel = beginner, intermediate, expert
+  // techStack = React, JavaScript, Python, etc
+  socket.on("join_queue", ({ userId, skillLevel, techStack }) => {
+    //if the user is already in the queue, then do nothing.
+    if (queue.find((queuedUser) => queuedUser.userId === userId)) return;
+
+    //create a new user to ush into the queue.
+    const newUser = { socketId: socket.id, userId, skillLevel, techStack };
+    queue.push(newUser);
+
+    //Look in queue to find someone with similar skillLevel and techStack.
+    const matchedUser = findMatch(queue, newUser);
+
+    if (!matchedUser) return;
+
+    //remove both the user and matchedUser from queue.
+    for (let i = queue.length - 1; i > 0; i--) {
+      if (
+        queue[i].userId === matchedUser.userId ||
+        queue[i].userId === newUser.userId
+      ) {
+        queue.splice(i, 1);
+      }
+    }
+    //create new room, add both to room
+  });
+});
 
 mongoose.connect(DB).then(() => console.log("Connected to Database!"));
 
