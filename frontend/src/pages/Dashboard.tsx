@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { joinQueue } from "../services/apiSockets";
+import { useUserContext } from "../../contexts/userContext";
 
 const availableStacks = ["React", "Angular", "Vue"];
 
@@ -6,8 +8,15 @@ export default function Dashboard() {
   const [skillLevel, setSkillLevel] = useState("beginner");
   const [techStack, setTechStack] = useState<string[]>([]);
 
+  const { user } = useUserContext();
+
+  if (!user) return <div>Loading...</div>;
+
+  const { userId, username } = user;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    joinQueue({ userId, username, skillLevel, techStack });
   };
 
   return (
