@@ -5,6 +5,7 @@ import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import SprintRoom from "./pages/SprintRoom";
 import { UserContextProvider } from "../contexts/userContext";
+import LogIn from "./pages/LogIn";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           {/* Account Routes */}
           <Route path="/accounts/" element={<Layout />}>
             <Route path="signup" element={<SignUp />} />
+            <Route path="login" element={<LogIn />} />
           </Route>
 
           {/* Room Routes */}

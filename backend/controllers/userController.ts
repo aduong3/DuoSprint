@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import User from "../models/userModel";
 import jwt from "jsonwebtoken";
 
@@ -56,7 +56,7 @@ type UserType = {
 //   });
 // };
 
-export async function signUp(req: Request, res: Response, next: NextFunction) {
+export async function signUp(req: Request, res: Response) {
   // req.body needs to include the authProvider so that we know which route to take in signUp
   try {
     const {
@@ -100,6 +100,42 @@ export async function signUp(req: Request, res: Response, next: NextFunction) {
           .map((e: any) => e.message)
           .join(" ");
       }
+    }
+
+    res.status(400).json({
+      status: "failed",
+      message: msg,
+    });
+  }
+}
+
+export async function logIn(req: Request, res: Response) {
+  try {
+    const { usernameOrEmail, password } = req.body;
+
+    // see if we can find user with these credentials
+    const user = await User.findOne({
+      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+    }).select("+password");
+
+    // check if user exists or if the password is correct
+    if (!user || !(await user.checkPassword(password, user.password!))) {
+      throw new Error("There is no user with this username or email!");
+    }
+
+    // do not display the password
+    user.password = undefined;
+
+    res.status(200).json({
+      status: "success",
+      user,
+    });
+  } catch (err) {
+    let msg;
+    if (err instanceof Error) {
+      msg = err.message;
+    } else {
+      msg = err;
     }
 
     res.status(400).json({

@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { connectSocket, joinQueue, socket } from "../services/apiSockets";
+import {
+  connectSocket,
+  disconnectSocket,
+  joinQueue,
+  socket,
+} from "../services/apiSockets";
 import { useUserContext } from "../../contexts/userContext";
 import { useNavigate } from "react-router-dom";
 
@@ -30,7 +35,7 @@ export default function Dashboard() {
     return () => {
       socket.off("match_found");
     };
-  }, []);
+  });
 
   return (
     <div className="flex flex-col gap-3">
@@ -67,6 +72,7 @@ export default function Dashboard() {
 
         <button>Start Sprint</button>
       </form>
+      <button onClick={disconnectSocket}>Disconnect</button>
     </div>
   );
 }

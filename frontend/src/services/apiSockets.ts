@@ -18,7 +18,11 @@ export const connectSocket = () => {
 };
 
 export const disconnectSocket = () => {
-  if (socket.connected) socket.disconnect();
+  if (socket.connected) {
+    socket.removeAllListeners();
+    socket.disconnect();
+    console.log("disconnected socket!");
+  }
 };
 
 export const joinQueue = ({

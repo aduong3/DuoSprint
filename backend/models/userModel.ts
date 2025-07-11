@@ -10,6 +10,7 @@ interface IUser extends Document {
   authProvider: "local" | "google" | "github";
   providerId?: string;
   role: "user" | "admin";
+  checkPassword(password: string, encryptedPassword: string): Promise<boolean>;
 
   isModified(field: string): boolean; // tell TS this method exists
 }
