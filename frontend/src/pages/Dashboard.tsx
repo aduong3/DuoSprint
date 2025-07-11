@@ -22,6 +22,9 @@ export default function Dashboard() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!skillLevel || !techStack) return;
+
+    // console.log(userId, skillLevel, techStack, username);
     connectSocket();
     joinQueue({ userId, username, skillLevel, techStack });
   };
@@ -35,7 +38,7 @@ export default function Dashboard() {
     return () => {
       socket.off("match_found");
     };
-  });
+  }, []);
 
   return (
     <div className="flex flex-col gap-3">

@@ -19,7 +19,7 @@ export default function SignUp() {
   const mutation = useMutation({
     mutationFn: signUpTraditional,
     onSuccess: (data) => {
-      const { _id: userId, username } = data;
+      const { _id: userId, username } = data.user;
 
       setUser({ userId, username });
 

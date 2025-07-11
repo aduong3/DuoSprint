@@ -56,7 +56,6 @@ io.on("connection", (socket) => {
       techStack,
     };
     queue.push(newUser);
-    console.log(newUser, "is in the queue");
 
     //Look in queue to find someone with similar skillLevel and techStack.
     const matchedUser = findMatch(queue, newUser);

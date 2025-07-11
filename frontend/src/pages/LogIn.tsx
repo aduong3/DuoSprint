@@ -16,8 +16,7 @@ export default function LogIn() {
   const mutation = useMutation({
     mutationFn: logInTraditional,
     onSuccess: (data) => {
-      const { _id: userId, username } = data;
-
+      const { _id: userId, username } = data.user;
       setUser({ userId, username });
 
       setUsernameOrEmail("");
