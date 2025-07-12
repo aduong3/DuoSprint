@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
   // techStack = React, JavaScript, Python, etc
   socket.on("join_queue", ({ userId, skillLevel, techStack, username }) => {
     //if the user is already in the queue, then do nothing.
-    if (queue.find((queuedUser) => queuedUser.userId === userId)) return;
+    if (queue.find((queuedUser) => queuedUser.socketId === socket.id)) return;
 
     //create a new user to push into the queue.
     const newUser = {
