@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { disconnectSocket } from "../services/apiSockets";
 import { Editor } from "@monaco-editor/react";
+import { Sandpack } from "@codesandbox/sandpack-react";
 import { useEffect, useState } from "react";
 
 export default function SprintRoom() {
@@ -24,7 +25,7 @@ export default function SprintRoom() {
     //socket.on code change, get incoming code and call it to setCode
 
     return () => {
-      //socket.off code chagne
+      //socket.off code change
     };
   });
 
@@ -35,13 +36,26 @@ export default function SprintRoom() {
         <button onClick={handleDisconnect}>Disconnect</button>
       </div>
 
-      <Editor
+      {/* <Editor
         language="javascript"
         theme="vs-dark"
         width="50vw"
         height="70vh"
         value={code}
         onChange={handleCodeChange}
+      /> */}
+
+      <Sandpack
+        template="react"
+        theme="dark"
+        options={{
+          showTabs: true,
+          showLineNumbers: true,
+          showInlineErrors: true,
+          showNavigator: true,
+          wrapContent: true,
+          editorHeight: 700,
+        }}
       />
     </div>
   );
