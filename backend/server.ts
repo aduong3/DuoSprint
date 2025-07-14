@@ -39,8 +39,6 @@ const queue: User[] = [];
 const rooms = new Set<string>();
 // 3. Listen for io conection
 io.on("connection", (socket) => {
-  socket.data.roomId = null;
-
   // skillLevel = beginner, intermediate, expert
   // techStack = React, JavaScript, Python, etc
   socket.on("join_queue", ({ userId, skillLevel, techStack, username }) => {
@@ -101,6 +99,16 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     const roomId = socket.data.roomId;
     if (roomId) cleanUpRoom(io, rooms, roomId);
+  });
+
+  socket.on("join_room", (roomId) => {
+    console.log(`Socket`, socket.id, `joined room`, roomId);
+    socket.join(roomId);
+  });
+
+  socket.on("code_change", ({ roomId, code }) => {
+    // console.log("code_change calls", code);
+    socket.to(roomId).emit("code_change", code);
   });
 });
 

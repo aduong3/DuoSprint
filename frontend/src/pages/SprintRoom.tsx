@@ -1,11 +1,15 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { disconnectSocket } from "../services/apiSockets";
-import { Editor } from "@monaco-editor/react";
-import { Sandpack } from "@codesandbox/sandpack-react";
-import { useEffect, useState } from "react";
+import { disconnectSocket, socket } from "../services/apiSockets";
+import {
+  SandpackLayout,
+  SandpackPreview,
+  SandpackProvider,
+} from "@codesandbox/sandpack-react";
+import { SandpackFileExplorer } from "sandpack-file-explorer";
+import { useEffect } from "react";
+import MonacoEditor from "../components/MonacoEditor";
 
 export default function SprintRoom() {
-  const [code, setCode] = useState("// Start Coding Now!");
   const { id: roomId } = useParams();
   const navigate = useNavigate();
 
@@ -14,49 +18,27 @@ export default function SprintRoom() {
     navigate("/dashboard", { replace: true });
   };
 
-  const handleCodeChange = (newValue: string | undefined) => {
-    if (newValue === undefined) return;
-    setCode(newValue);
-
-    //socket.emit changes to the roomId with codes
-  };
-
   useEffect(() => {
-    //socket.on code change, get incoming code and call it to setCode
-
-    return () => {
-      //socket.off code change
-    };
-  });
+    socket.emit("join_room", roomId);
+  }, [roomId]);
 
   return (
     <div className="flex flex-col h-svh">
       <div className="flex gap-12">
-        <span>SprintRoom {roomId}</span>
-        <button onClick={handleDisconnect}>Disconnect</button>
+        <span className="text-xl">SprintRoom {roomId}</span>
+        <button onClick={handleDisconnect} className="bg-red-500 py-1 px-2">
+          Disconnect
+        </button>
       </div>
 
-      {/* <Editor
-        language="javascript"
-        theme="vs-dark"
-        width="50vw"
-        height="70vh"
-        value={code}
-        onChange={handleCodeChange}
-      /> */}
+      <SandpackProvider template="react" theme="dark">
+        <SandpackLayout>
+          <SandpackFileExplorer />
 
-      <Sandpack
-        template="react"
-        theme="dark"
-        options={{
-          showTabs: true,
-          showLineNumbers: true,
-          showInlineErrors: true,
-          showNavigator: true,
-          wrapContent: true,
-          editorHeight: 700,
-        }}
-      />
+          <MonacoEditor roomId={roomId} />
+          <SandpackPreview />
+        </SandpackLayout>
+      </SandpackProvider>
     </div>
   );
 }
