@@ -7,39 +7,70 @@ import {
 } from "@codesandbox/sandpack-react";
 import { socket } from "../services/apiSockets";
 import { useEffect, useRef, useState } from "react";
+import { useTrackFileChanges } from "../../hooks/useTrackFileChanges";
 
 export default function MonacoEditor({ roomId }) {
-  const [localCode, setLocalCode] = useState(`export default function App() {
-  return <h1>Hello world</h1>
-}`);
+  //   const [localCode, setLocalCode] = useState(`export default function App() {
+  //   return <h1>Hello world</h1>
+  // }`);
   const { code, updateCode } = useActiveCode();
   const { sandpack } = useSandpack();
 
   const isRemoteChange = useRef(false);
 
+  useTrackFileChanges(({ added, removed }) => {
+    if (added.length) {
+      added.forEach((filename) => {
+        socket.emit("new_file", {
+          roomId,
+          filename,
+          content: sandpack.files[filename].code,
+        });
+      });
+    }
+
+    if (removed.length) {
+      removed.forEach((filename) => {
+        socket.emit("deleted_file", { roomId, filename });
+      });
+    }
+  });
+
   const handleCodeChange = (value) => {
-    // if (isRemoteChange.current) {
-    //   isRemoteChange.current = false;
-    //   return;
-    // }
+    if (isRemoteChange.current) {
+      isRemoteChange.current = false;
+      return;
+    }
     if (value === undefined || value === null) return;
     updateCode(value);
-    setLocalCode(value);
-    socket.emit("code_change", { roomId, code: value });
+    // setLocalCode(value);
+    socket.emit("code_change", {
+      roomId,
+      filename: sandpack.activeFile,
+      code: value,
+    });
   };
 
   useEffect(() => {
-    socket.on("code_change", (newCode) => {
-      console.log(newCode);
+    socket.on("code_change", ({ filename, code: newCode }) => {
       isRemoteChange.current = true;
-      updateCode(newCode);
-      setLocalCode(newCode);
+      // updateCode(newCode);
+      sandpack.updateFile(filename, newCode);
+      // setLocalCode(newCode);
+    });
+
+    socket.on("new_file", ({ filename, content }) => {
+      if (!sandpack.files[filename]) {
+        sandpack.updateFile(filename, content); // or use addFile if available
+        sandpack.setActiveFile(filename);
+      }
     });
 
     return () => {
       socket.off("code_change");
+      socket.off("new_file");
     };
-  }, []);
+  }, [updateCode, sandpack]);
 
   return (
     <SandpackStack>
@@ -50,9 +81,8 @@ export default function MonacoEditor({ roomId }) {
           height="100%"
           theme="vs-dark"
           language="javascript"
-          // key={sandpack.activeFile}
-          value={localCode}
-          // onChange={(value) => updateCode(value || "")}
+          key={sandpack.activeFile}
+          value={code}
           onChange={handleCodeChange}
         />
       </div>

@@ -106,9 +106,13 @@ io.on("connection", (socket) => {
     socket.join(roomId);
   });
 
-  socket.on("code_change", ({ roomId, code }) => {
-    // console.log("code_change calls", code);
-    socket.to(roomId).emit("code_change", code);
+  socket.on("code_change", ({ roomId, filename, code }) => {
+    // console.log("code_change calls", code, filename);
+    socket.to(roomId).emit("code_change", { filename, code });
+  });
+
+  socket.on("new_file", ({ roomId, filename, content }) => {
+    socket.to(roomId).emit("new_file", { filename, content });
   });
 });
 
