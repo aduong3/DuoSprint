@@ -6,12 +6,14 @@ import {
   SandpackProvider,
 } from "@codesandbox/sandpack-react";
 import { SandpackFileExplorer } from "sandpack-file-explorer";
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import MonacoEditor from "../components/MonacoEditor";
 
 export default function SprintRoom() {
   const { id: roomId } = useParams();
   const navigate = useNavigate();
+  const [explorerRefreshKey, setExplorerRefreshKey] = useState(0);
 
   const handleDisconnect = () => {
     disconnectSocket();
@@ -33,9 +35,12 @@ export default function SprintRoom() {
 
       <SandpackProvider template="react" theme="dark">
         <SandpackLayout>
-          <SandpackFileExplorer />
+          <SandpackFileExplorer key={explorerRefreshKey} />
 
-          <MonacoEditor roomId={roomId} />
+          <MonacoEditor
+            roomId={roomId}
+            setExplorerRefreshKey={setExplorerRefreshKey}
+          />
           <SandpackPreview />
         </SandpackLayout>
       </SandpackProvider>

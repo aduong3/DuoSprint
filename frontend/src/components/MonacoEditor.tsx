@@ -6,14 +6,12 @@ import {
   useSandpack,
 } from "@codesandbox/sandpack-react";
 import { socket } from "../services/apiSockets";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useTrackFileChanges } from "../../hooks/useTrackFileChanges";
 
-export default function MonacoEditor({ roomId }) {
-  //   const [localCode, setLocalCode] = useState(`export default function App() {
-  //   return <h1>Hello world</h1>
-  // }`);
+export default function MonacoEditor({ roomId, setExplorerRefreshKey }) {
   const { code, updateCode } = useActiveCode();
+
   const { sandpack } = useSandpack();
 
   const isRemoteChange = useRef(false);
@@ -21,6 +19,13 @@ export default function MonacoEditor({ roomId }) {
   useTrackFileChanges(({ added, removed }) => {
     if (added.length) {
       added.forEach((filename) => {
+        if (
+          filename.toLowerCase().includes("untitled") ||
+          filename.toLowerCase().includes("file name") ||
+          filename === "/addFile"
+        ) {
+          return;
+        }
         socket.emit("new_file", {
           roomId,
           filename,
@@ -43,7 +48,6 @@ export default function MonacoEditor({ roomId }) {
     }
     if (value === undefined || value === null) return;
     updateCode(value);
-    // setLocalCode(value);
     socket.emit("code_change", {
       roomId,
       filename: sandpack.activeFile,
@@ -56,13 +60,14 @@ export default function MonacoEditor({ roomId }) {
       isRemoteChange.current = true;
       // updateCode(newCode);
       sandpack.updateFile(filename, newCode);
-      // setLocalCode(newCode);
     });
 
     socket.on("new_file", ({ filename, content }) => {
       if (!sandpack.files[filename]) {
         sandpack.updateFile(filename, content); // or use addFile if available
+        // sandpack.addFile(filename, { code: content });
         sandpack.setActiveFile(filename);
+        setExplorerRefreshKey((v) => v + 1);
       }
     });
 
@@ -70,7 +75,7 @@ export default function MonacoEditor({ roomId }) {
       socket.off("code_change");
       socket.off("new_file");
     };
-  }, [updateCode, sandpack]);
+  }, [sandpack, setExplorerRefreshKey]);
 
   return (
     <SandpackStack>
