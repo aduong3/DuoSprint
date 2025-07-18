@@ -112,6 +112,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("new_file", ({ roomId, filename, content }) => {
+    // console.log(filename);
     socket.to(roomId).emit("new_file", { filename, content });
   });
 });

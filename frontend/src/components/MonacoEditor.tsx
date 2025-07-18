@@ -22,7 +22,8 @@ export default function MonacoEditor({ roomId, setExplorerRefreshKey }) {
         if (
           filename.toLowerCase().includes("untitled") ||
           filename.toLowerCase().includes("file name") ||
-          filename === "/addFile"
+          filename === "/addFile" ||
+          filename === "/addDir"
         ) {
           return;
         }
