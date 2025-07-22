@@ -39,9 +39,11 @@ const queue: User[] = [];
 const rooms = new Set<string>();
 // 3. Listen for io conection
 io.on("connection", (socket) => {
+  socket.data.username = null;
   // skillLevel = beginner, intermediate, expert
   // techStack = React, JavaScript, Python, etc
   socket.on("join_queue", ({ userId, skillLevel, techStack, username }) => {
+    socket.data.username = username;
     //if the user is already in the queue, then do nothing.
     if (queue.find((queuedUser) => queuedUser.socketId === socket.id)) return;
 
@@ -114,6 +116,12 @@ io.on("connection", (socket) => {
   socket.on("new_file", ({ roomId, filename, content }) => {
     // console.log(filename);
     socket.to(roomId).emit("new_file", { filename, content });
+  });
+
+  socket.on("send_message", (message) => {
+    const roomId = socket.data.roomId;
+    const nickname = socket.data.username;
+    socket.to(roomId).emit("receive_message", { nickname, message });
   });
 });
 

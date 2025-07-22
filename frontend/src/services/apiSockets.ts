@@ -33,3 +33,7 @@ export const joinQueue = ({
 }: QueueData) => {
   socket.emit("join_queue", { userId, skillLevel, techStack, username });
 };
+
+export const sendMessage = (message: string) => {
+  socket.emit("send_message", message);
+};
