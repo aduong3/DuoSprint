@@ -9,6 +9,7 @@ import { SandpackFileExplorer } from "sandpack-file-explorer";
 
 import { useEffect, useState } from "react";
 import MonacoEditor from "../components/MonacoEditor";
+import Chatbox from "../components/Chatbox";
 
 export default function SprintRoom() {
   const { id: roomId } = useParams();
@@ -25,14 +26,7 @@ export default function SprintRoom() {
   }, [roomId]);
 
   return (
-    <div className="grid grid-rows-[5vh_70vh_25vh]">
-      <div className="flex gap-12 py-2 px-3">
-        <span className="text-xl">SprintRoom {roomId}</span>
-        <button onClick={handleDisconnect} className="bg-red-500 py-1 px-2">
-          Disconnect
-        </button>
-      </div>
-
+    <div className="grid grid-rows-[70vh_30vh] bg-zinc-800">
       <div>
         <SandpackProvider template="react" theme="dark">
           <SandpackLayout>
@@ -47,8 +41,17 @@ export default function SprintRoom() {
           </SandpackLayout>
         </SandpackProvider>
       </div>
-      <div>
-        <h1>Chatroom area</h1>
+      <div className="flex gap-12">
+        <div className="flex flex-col  px-3 py-2">
+          <span className="text-xl text-white">SprintRoom {roomId}</span>
+          <button
+            onClick={handleDisconnect}
+            className="bg-red-600 text-white py-1 px-2"
+          >
+            Disconnect
+          </button>
+        </div>
+        <Chatbox />
       </div>
     </div>
   );
