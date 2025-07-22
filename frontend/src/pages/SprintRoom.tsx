@@ -26,24 +26,30 @@ export default function SprintRoom() {
 
   return (
     <div className="flex flex-col h-svh">
-      <div className="flex gap-12">
+      <div className="flex gap-12 py-2 px-3">
         <span className="text-xl">SprintRoom {roomId}</span>
         <button onClick={handleDisconnect} className="bg-red-500 py-1 px-2">
           Disconnect
         </button>
       </div>
+      <div className="flex-1">
+        <SandpackProvider
+          template="react"
+          theme="dark"
+          style={{ height: "100%", backgroundColor: "#011627" }}
+        >
+          <SandpackLayout>
+            <SandpackFileExplorer key={explorerRefreshKey} />
 
-      <SandpackProvider template="react" theme="dark">
-        <SandpackLayout>
-          <SandpackFileExplorer key={explorerRefreshKey} />
+            <MonacoEditor
+              roomId={roomId}
+              setExplorerRefreshKey={setExplorerRefreshKey}
+            />
 
-          <MonacoEditor
-            roomId={roomId}
-            setExplorerRefreshKey={setExplorerRefreshKey}
-          />
-          <SandpackPreview />
-        </SandpackLayout>
-      </SandpackProvider>
+            <SandpackPreview style={{ height: "100%" }} />
+          </SandpackLayout>
+        </SandpackProvider>
+      </div>
     </div>
   );
 }

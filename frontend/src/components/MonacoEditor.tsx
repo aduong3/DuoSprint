@@ -79,19 +79,18 @@ export default function MonacoEditor({ roomId, setExplorerRefreshKey }) {
   }, [sandpack, setExplorerRefreshKey]);
 
   return (
-    <SandpackStack>
+    <SandpackStack style={{ height: "100vh", margin: 0 }}>
       <FileTabs />
-      <div style={{ flex: 1, paddingTop: 8, background: "#1e1e1e" }}>
-        <Editor
-          width="100%"
-          height="100%"
-          theme="vs-dark"
-          language="javascript"
-          key={sandpack.activeFile}
-          value={code}
-          onChange={handleCodeChange}
-        />
-      </div>
+
+      <Editor
+        width="100%"
+        height="100%"
+        theme="vs-dark"
+        language="javascript"
+        key={sandpack.activeFile}
+        value={code}
+        onChange={handleCodeChange}
+      />
     </SandpackStack>
   );
 }
