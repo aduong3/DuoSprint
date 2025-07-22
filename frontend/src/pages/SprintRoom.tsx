@@ -25,19 +25,16 @@ export default function SprintRoom() {
   }, [roomId]);
 
   return (
-    <div className="flex flex-col h-svh">
+    <div className="grid grid-rows-[5vh_70vh_25vh]">
       <div className="flex gap-12 py-2 px-3">
         <span className="text-xl">SprintRoom {roomId}</span>
         <button onClick={handleDisconnect} className="bg-red-500 py-1 px-2">
           Disconnect
         </button>
       </div>
-      <div className="flex-1">
-        <SandpackProvider
-          template="react"
-          theme="dark"
-          style={{ height: "100%", backgroundColor: "#011627" }}
-        >
+
+      <div>
+        <SandpackProvider template="react" theme="dark">
           <SandpackLayout>
             <SandpackFileExplorer key={explorerRefreshKey} />
 
@@ -46,9 +43,12 @@ export default function SprintRoom() {
               setExplorerRefreshKey={setExplorerRefreshKey}
             />
 
-            <SandpackPreview style={{ height: "100%" }} />
+            <SandpackPreview />
           </SandpackLayout>
         </SandpackProvider>
+      </div>
+      <div>
+        <h1>Chatroom area</h1>
       </div>
     </div>
   );

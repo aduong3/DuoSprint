@@ -79,7 +79,7 @@ export default function MonacoEditor({ roomId, setExplorerRefreshKey }) {
   }, [sandpack, setExplorerRefreshKey]);
 
   return (
-    <SandpackStack style={{ height: "100vh", margin: 0 }}>
+    <SandpackStack style={{ height: "70vh", margin: 0 }}>
       <FileTabs />
 
       <Editor
