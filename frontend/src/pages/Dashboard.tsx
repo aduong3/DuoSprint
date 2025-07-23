@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react";
-import {
-  connectSocket,
-  disconnectSocket,
-  joinQueue,
-  socket,
-} from "../services/apiSockets";
+import { connectSocket, joinQueue, socket } from "../services/apiSockets";
 import { useUserContext } from "../../contexts/userContext";
 import { useNavigate } from "react-router-dom";
 
-const availableStacks = ["React", "Angular", "Vue"];
+// const availableStacks = ["React", "Angular", "Vue"];
 
 export default function Dashboard() {
   const [skillLevel, setSkillLevel] = useState("beginner");
-  const [techStack, setTechStack] = useState<string[]>([]);
+  const [techStack, setTechStack] = useState<"react" | "angular" | "vue">(
+    "react"
+  );
 
   const { user } = useUserContext();
 
@@ -33,7 +30,7 @@ export default function Dashboard() {
   useEffect(() => {
     socket.on("match_found", ({ newRoomId, partner }) => {
       console.log("Matched with", partner);
-      navigate(`/room/${newRoomId}`);
+      navigate(`/room/${techStack}/${newRoomId}`);
     });
 
     return () => {
@@ -44,19 +41,22 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-3">
       <span>Dashboard</span>
-      <form onSubmit={handleSubmit}>
-        <label>Skill Level:</label>
-        <select
-          value={skillLevel}
-          onChange={(e) => setSkillLevel(e.target.value)}
-        >
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="expert">Expert</option>
-        </select>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <label>
+          Skill Level:
+          <select
+            value={skillLevel}
+            onChange={(e) => setSkillLevel(e.target.value)}
+          >
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="expert">Expert</option>
+          </select>
+        </label>
 
-        <label>Tech Stack</label>
-        {availableStacks.map((stack) => (
+        <label>
+          Tech Stack
+          {/* {availableStacks.map((stack) => (
           <div key={stack}>
             <label>{stack}</label>
             <input
@@ -72,7 +72,18 @@ export default function Dashboard() {
               }
             />
           </div>
-        ))}
+        ))} */}
+          <select
+            value={techStack}
+            onChange={(e) =>
+              setTechStack(e.target.value as "react" | "angular" | "vue")
+            }
+          >
+            <option value="react">React</option>
+            <option value="angular">Angular</option>
+            <option value="vue">Vue</option>
+          </select>
+        </label>
 
         <button>Start Sprint</button>
       </form>

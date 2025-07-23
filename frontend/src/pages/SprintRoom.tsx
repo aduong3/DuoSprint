@@ -11,10 +11,17 @@ import { useEffect, useState } from "react";
 import MonacoEditor from "../components/MonacoEditor";
 import Chatbox from "../components/Chatbox";
 
+const availableStacks = ["react", "angular", "vue"] as const;
+type TechStack = (typeof availableStacks)[number];
+
 export default function SprintRoom() {
-  const { id: roomId } = useParams();
+  const { tech, id: roomId } = useParams();
   const navigate = useNavigate();
   const [explorerRefreshKey, setExplorerRefreshKey] = useState(0);
+
+  const techStack = (["react", "angular", "vue"] as const).includes(tech as any)
+    ? (tech as TechStack)
+    : "react";
 
   const handleDisconnect = () => {
     disconnectSocket();
@@ -28,7 +35,7 @@ export default function SprintRoom() {
   return (
     <div className="grid grid-rows-[70vh_30vh] bg-zinc-800">
       <div>
-        <SandpackProvider template="react" theme="dark">
+        <SandpackProvider template={techStack} theme="dark">
           <SandpackLayout>
             <SandpackFileExplorer key={explorerRefreshKey} />
 

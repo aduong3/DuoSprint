@@ -11,7 +11,7 @@ export function findMatch(queue: User[], user: User): User | undefined {
     if (queuedUser.userId === user.userId) return false;
     if (queuedUser.skillLevel !== user.skillLevel) return false;
 
-    return queuedUser.techStack.some((tech) => user.techStack.includes(tech));
+    return queuedUser.techStack === user.techStack;
   });
 
   return match;

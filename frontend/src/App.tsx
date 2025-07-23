@@ -24,7 +24,7 @@ function App() {
           </Route>
 
           {/* Room Routes */}
-          <Route path="/room/:id" element={<SprintRoom />} />
+          <Route path="/room/:tech/:id" element={<SprintRoom />} />
         </Routes>
       </BrowserRouter>
     </UserContextProvider>

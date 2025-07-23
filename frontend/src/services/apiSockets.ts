@@ -5,7 +5,7 @@ const URL = import.meta.env.VITE_SOCKET_URL;
 type QueueData = {
   userId: string;
   skillLevel: string;
-  techStack: string[];
+  techStack: string;
   username: string;
 };
 
