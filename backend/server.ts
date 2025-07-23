@@ -85,9 +85,6 @@ io.on("connection", (socket) => {
     matchedUserSocket!.data.roomId = newRoomId;
     userSocket!.data.roomId = newRoomId;
 
-    matchedUserSocket?.join(newRoomId);
-    userSocket?.join(newRoomId);
-
     matchedUserSocket?.emit("match_found", {
       newRoomId,
       partner: newUser.username,
