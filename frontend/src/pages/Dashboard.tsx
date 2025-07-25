@@ -29,7 +29,7 @@ export default function Dashboard() {
   // maybe better to somehow emit the tech stack so that we can load it into the editor. ----------------------------
   useEffect(() => {
     socket.on("match_found", ({ newRoomId, partner }) => {
-      console.log("Matched with", partner);
+      //console.log("Matched with", partner);
       navigate(`/room/${techStack}/${newRoomId}`);
     });
 
